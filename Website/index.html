@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <title>Pauline & Baptiste</title>
+  <style>
+    body {
+      background-color: #fff0e7;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;   /* toujours centré verticalement */
+      height: 100vh;             /* occupe la hauteur de l’écran */
+      margin: 0;
+      font-family: 'Bebas Neue', sans-serif;
+      text-align: center;
+      overflow: hidden;
+      padding: 10px;
+    }
+
+    .cover {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ed4672;
+      color: #ffffff;
+      font-family: 'Press Start 2P', cursive;
+      font-size: 2rem;
+      z-index: 10;
+      cursor: pointer;
+      transition: opacity 1s ease;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .cover p {
+      margin: 0;
+      margin-bottom: 10vh;
+    }
+
+    .cover.hidden { opacity: 0; pointer-events: none; }
+    .cover p { animation: blinkMove 2s infinite ease-in-out; }
+    @keyframes blinkMove { 
+      0%,100% { opacity:1; transform:translateY(0);} 
+      50% { opacity:0.5; transform:translateY(-20px);} 
+    }
+
+    .hidden-text { visibility: hidden; white-space: pre; }
+    .paulinebaptiste { font-size: 8rem; color: #ed4672; margin: 0; }
+    .date { font-size: 25vh; color: #ff7c15; line-height: 1; margin: 0; position: relative; }
+    .lieu { font-size: 6rem; color: #ed4672; margin: 10px 0 30px 0; }
+
+    .btn {
+      display: inline-block;
+      padding: 14px 28px;
+      background-color: #ff7c15;
+      color: rgb(255, 255, 255);
+      text-decoration: none;
+      border-radius: 10px;
+      font-size: 1.4rem;
+      transition: background 0.3s, transform 0.2s;
+      visibility: hidden;
+    }
+    .btn:hover { background-color: #ed4672; color: rgb(255, 255, 255); transform: scale(1.05); }
+
+    /* Particules de feu d’artifice */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      width: 6px;
+      height: 6px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* Responsive global */
+    @media (max-width: 768px) {
+      .paulinebaptiste { font-size: 4.5rem; }
+      .date { font-size: 18vh; }
+      .lieu { font-size: 3rem; }
+      .btn { font-size: 1rem; padding: 10px 20px; }
+    }
+
+    @media (max-width: 480px) {
+      .cover {
+        font-size: 1.2rem;
+        padding: 0 20px 60px 20px;
+        justify-content: flex-end;
+      }
+
+      .cover p {
+        margin-bottom: 8vh;
+        font-size: 1.2rem;
+      }
+
+      .paulinebaptiste { font-size: 2.5rem; }
+      .date { font-size: 12vh; }
+      .lieu { font-size: 1.8rem; }
+      .btn { font-size: 0.9rem; padding: 8px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cover" id="cover">
+    <p>PRESS START</p>
+  </div>
+
+  <h1 class="paulinebaptiste hidden-text" id="text1">Pauline & Baptiste</h1>
+  <h2 class="date hidden-text" id="text2">01•08•2026</h2>
+  <h3 class="lieu hidden-text" id="text3">Gaillac (81)</h3>
+  <a class="btn" id="btn" href="Mariage Pauline & Baptiste.ics" download>Save the date</a>
+
+  <script>
+  function typeWriter(element, text, delay, callback) {
+    let i = 0;
+    element.textContent = "";
+    element.style.visibility = "visible";
+    function typing() {
+      if (i < text.length) {
+        element.textContent += text.charAt(i);
+        i++;
+        setTimeout(typing, delay);
+      } else if (callback) callback();
+    }
+    typing();
+  }
+
+  function animateDateChars(dateEl) {
+    const text = dateEl.textContent;
+    dateEl.textContent = "";
+    const chars = text.split("").map(c => {
+      const span = document.createElement("span");
+      span.textContent = c;
+      span.style.color = "#ff7c15";
+      dateEl.appendChild(span);
+      return span;
+    });
+
+    let i = 0;
+    function highlightNext() {
+      if(chars.length === 0) return;
+      const prev = chars[(i-1+chars.length)%chars.length];
+      if(prev) prev.style.color = "#ff7c15";
+      chars[i].style.color = "#ed4672";
+      i = (i+1) % chars.length;
+      setTimeout(highlightNext, 300);
+    }
+    highlightNext();
+  }
+
+  // Feux d’artifice
+  function launchFireworks() {
+    const colors = ["#ff1493", "#1e90ff", "#32cd32", "#ffa500", "#9400d3", "#ff4500"];
+    const numParticles = 250;
+
+    const x = Math.random() * window.innerWidth;
+    const y = Math.random() * window.innerHeight;
+
+    for (let i = 0; i < numParticles; i++) {
+      const particle = document.createElement("div");
+      particle.className = "particle";
+      particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      particle.style.left = x + "px";
+      particle.style.top = y + "px";
+      document.body.appendChild(particle);
+
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = Math.random() * 200 + 50;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+
+      particle.animate([
+        { transform: "translate(0,0)", opacity: 1 },
+        { transform: `translate(${dx}px, ${dy}px)`, opacity: 0 }
+      ], {
+        duration: 500 + Math.random() * 2000,
+        easing: "ease-out",
+        fill: "forwards"
+      });
+
+      setTimeout(() => particle.remove(), 2000);
+    }
+  }
+
+  document.getElementById('cover').addEventListener('click', function() {
+    this.classList.add('hidden');
+    setTimeout(() => {
+      typeWriter(document.getElementById("text1"), "Pauline & Baptiste", 150, () => {
+        typeWriter(document.getElementById("text2"), "01•08•2026", 200, () => {
+          typeWriter(document.getElementById("text3"), "Gaillac (81)", 150, () => {
+            document.getElementById("btn").style.visibility = "visible";
+            animateDateChars(document.getElementById("text2"));
+            setInterval(launchFireworks, 500);
+          });
+        });
+      });
+    }, 800);
+  });
+
+  const icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nBEGIN:VEVENT\nSUMMARY:Mariage Pauline & Baptiste\nDTSTART:20260801\nDTEND:20260801\nLOCATION:Gaillac (81)\nDESCRIPTION:\nEND:VEVENT\nEND:VCALENDAR`;
+  const blob = new Blob([icsContent], { type: 'text/calendar' });
+  const url = URL.createObjectURL(blob);
+  document.querySelector('.btn').setAttribute('href', url);
+  document.querySelector('.btn').setAttribute('download', 'Mariage Pauline & Baptiste.ics');
+  </script>
+</body>
+</html>
